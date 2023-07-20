@@ -38,7 +38,7 @@ async function sendEmail() {
 > If the above code runs correctly, you should see `202 Accepted` in your console.
 
 ### Some notes
-- **You don't necessarily have to own the sender address to send emails "from" it:** the lack of need for STMP authentication on Cloudflare's part means that you can impersonate many email addresses you do not own, effectively allowing you to spoof domains you don't own. If you want to avoid this happening to you, read the [[#spoofing protection]] section.
+- **You must control the domain you send "from":** MailChannels recently made domain verification mandatory for Cloudflare Workers users, requiring the addition of a simple TXT record; see the [[#spoofing protection]] section for more information.
 - **More content types than `text/plain` can be used:** my testing has included `text/html`, and more may be available.
 - **Without proper DNS setup, Gmail emails will not receive emails:** presumably because of Gmail's much stricter rules on which emails it will accept, mail sent via MailChannels without correct [[#SPF setup]] will be *entirely blocked*. They will not appear in the recipient's spam folder, nor will an error be raised by the fetch request. *Mail will simply be lost to the aether.*
 
@@ -72,8 +72,7 @@ If your domain already has SPF DNS records configured, insert `include:relay.mai
 
 ## Spoofing protection
 [Source 4]
-While not *strictly necessary*, the following is **highly recommended** as it offers your domain a bit of protection against email spoofing, which is possible with this mailer integration.
-This protection makes use of MailChannels' Domain Lockdown feature (MailChannels being the organisation Cloudflare collaborated with to provide this service), and is implemented via a DNS `TXT` record.
+MailChannels' Domain Lockdown feature (MailChannels being the organisation Cloudflare collaborated with to provide this service) uses the DNS to prove that you control the domains you want to send from via your Worker.
 The Domain Lockdown allows you to indicate a list of senders and accounts permitted to send emails from your domain. Any other accounts that attempt to send from your domain will be rejected with an error.
 
 **Currently, three lockdown identifiers are supported:**
@@ -110,17 +109,21 @@ v=mc1 auth=myhostingcompany auth=anotherprovider
 v=mc1 senderid=myhostingcompany|x-authuser|myusername
 ```
 
-### Finding your `auth` or `senderid`
-Every message sent through MailChannels carries two headers that can be used to identify the `auth` and `senderid` of the message:
-- `X-MailChannels-Auth-Id` - this header carries the `auth`
-- `X-MailChannels-Sender-Id` - this header carries the `senderid`
-
 ### Finding your `cfid`
 1. Go to https://dash.cloudflare.com/
 2. Select "Workers & Pages" from the left navigation bar
 3. Find your ID in the Subdomain section of your Account Details on the right
 
+Alternatively, you can just try sending without a Domain Lockdown record present and MailChannels will generate an error message that contains your `cfid` for convenience. Cut and paste that into your `_mailchannels` DNS record.
 
+### Finding your `auth` or `senderid`
+Every message sent through MailChannels carries two headers that can be used to identify the `auth` and `senderid` of the message:
+- `X-MailChannels-Auth-Id` - this header carries the `auth`
+- `X-MailChannels-Sender-Id` - this header carries the `senderid`
+
+### WARNING
+
+Specifying `auth=cloudflare` in your Domain Lockdown record will authorize every Cloudflare Worker to send from your domain. For obvious reasons, this is not recommended.
 
 ## References
 1) https://blog.cloudflare.com/sending-email-from-workers-with-mailchannels/
