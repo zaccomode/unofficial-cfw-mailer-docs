@@ -3,6 +3,9 @@
 
 Hello! Welcome to the unofficial Cloudflare Workers Mailer docs. Within this document, you'll find a basic setup guide to configure your Cloudflare Worker and domain's DNS settings to seamlessly send emails to any address using the MailChannels partnership. While this document is not officially endorsed, it compiles information from official Cloudflare Blog posts and MailChannels Support articles, as well as some experience from the authors.
 
+> Want an all-in-one, type-safe solution?
+> [Flaremailer](https://github.com/zaccomode/Flaremailer) provides the same function as the below guide, but is packaged into a neat package with the aim of making it easier to send emails with Cloudflare Workers.
+
 ## Getting started
 The following code is a basic overview of the code required within your Worker:
 ```js
