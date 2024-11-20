@@ -1,5 +1,8 @@
 ## Unofficial Cloudflare Workers Mailer Docs
-> Last updated 20/07/2023
+> Last updated 20/11/2024
+
+> **DEPRECATED:** MailChannels is no longer a secure and reliable way to send email using Cloudflare Workers. Consider using an alternative service such as Loops or Brevo.
+> See [this forum post](https://community.cloudflare.com/t/mailchannels-stopped-working-for-free-always-get-500-response-code/651600/4) for more information.
 
 Hello! Welcome to the unofficial Cloudflare Workers Mailer docs. Within this document, you'll find a basic setup guide to configure your Cloudflare Worker and domain's DNS settings to seamlessly send emails to any address using the MailChannels partnership. While this document is not officially endorsed, it compiles information from official Cloudflare Blog posts and MailChannels Support articles, as well as some experience from the authors.
 
